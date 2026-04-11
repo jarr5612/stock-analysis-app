@@ -11,6 +11,8 @@ st.set_page_config(page_title="Stock App", layout="wide")
 
 st.title("Stock Analysis App")
 
+st.caption("📉 This app does not guarantee profits. But it does guarantee charts.")
+
 st.sidebar.header("Inputs")
 
 default_start = date.today() - timedelta(days=365*2)
@@ -27,11 +29,11 @@ end_date = st.sidebar.date_input("End date", value=date.today(), min_value=date(
 tickers = [t.strip().upper() for t in ticker_input.split(",") if t.strip()]
 
 if len(tickers) < 2 or len(tickers) > 5:
-    st.error("Enter between 2 and 5 tickers.")
+    st.error("⚠️ Please enter between 2 and 5 tickers. We're analysts, not magicians.")
     st.stop()
 
 if (end_date - start_date).days < 365:
-    st.error("Date range must be at least 1 year. Please adjust your dates.")
+    st.error("⏳ Please select at least 1 year of data. The stock market needs time to disappoint you.")
     st.stop()
 
 @st.cache_data(ttl=3600)
@@ -44,7 +46,15 @@ def get_data(tickers, start, end):
         prices = data[["Close"]]
     return prices
 
-with st.spinner("Loading data..."):
+import random
+messages = [
+    "Asking Wall Street nicely...",
+    "Bribing the stock market for data...",
+    "Consulting our crystal ball...",
+    "Downloading tendies...",
+    "Checking if stonks only go up...",
+]
+with st.spinner(random.choice(messages)):
     try:
         data = get_data(tuple(tickers), start_date, end_date)
     except Exception as e:
@@ -52,12 +62,12 @@ with st.spinner("Loading data..."):
         st.stop()
 
 if data.empty:
-    st.error("No data returned. Check your ticker symbols and try again.")
+    st.error("🕳️ No data came back. The market has nothing to say about that ticker.")
     st.stop()
 
 bad = [t for t in tickers if t not in data.columns or data[t].dropna().empty]
 if bad:
-    st.error(f"Could not find data for: {', '.join(bad)}. Please check these tickers.")
+    st.error(f"❌ Could not find data for: {', '.join(bad)}. Try something that actually trades on a stock exchange.")
     st.stop()
 
 returns = data.pct_change().dropna()
@@ -99,6 +109,8 @@ with tab1:
         wealth_df[col] = (1 + returns[col]).cumprod() * 10000
 
     st.line_chart(wealth_df)
+
+    st.caption("Fun fact: If you had invested $10,000 in the S&P 500 in 1970, you'd have over $1.5 million today. If you had invested it in Blockbuster stock, you'd have nothing. Diversify.")
 
 with tab2:
     st.write("### Rolling Volatility")
@@ -221,6 +233,7 @@ with tab3:
 
 with tab4:
     st.write("### About / Methodology")
+
     st.write("""
     This application compares multiple stocks using historical adjusted closing prices from Yahoo Finance via yfinance.
 
