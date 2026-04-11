@@ -72,7 +72,8 @@ tab1, tab2, tab3, tab4 = st.tabs([
 
 with tab1:
     st.write("### Price Data")
-    st.line_chart(data)
+    normalized = data.div(data.iloc[0]) * 100
+    st.line_chart(normalized)
 
     st.write("### Daily Returns")
     st.line_chart(returns)
