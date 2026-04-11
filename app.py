@@ -9,6 +9,8 @@ from scipy.stats import skew, kurtosis, norm, probplot, jarque_bera
 
 st.set_page_config(page_title="Stock App", layout="wide")
 
+st.write("Hello World")
+
 st.title("Stock Analysis App")
 
 st.sidebar.header("Inputs")
