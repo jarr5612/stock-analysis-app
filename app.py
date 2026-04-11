@@ -21,8 +21,8 @@ ticker_input = st.sidebar.text_input(
     value="AAPL,MSFT"
 )
 
-start_date = st.sidebar.date_input("Start date", value=default_start, min_value=date(1970, 1, 1))
-end_date = st.sidebar.date_input("End date", value=date.today(), min_value=date(1970, 1, 1))
+start_date = st.sidebar.date_input("Start date", value=default_start, min_value=date(1970, 1, 1), max_value=)
+end_date = st.sidebar.date_input("End date", value=date.today(), min_value=date(1970, 1, 1), max_value=date.today() - timedelta(days=365))
 
 tickers = [t.strip().upper() for t in ticker_input.split(",") if t.strip()]
 
