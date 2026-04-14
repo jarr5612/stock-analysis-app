@@ -81,11 +81,14 @@ tab1, tab2, tab3, tab4 = st.tabs([
 ])
 
 with tab1:
-    st.write("### Adjusted Closing Prices")
+  
+    ("### Adjusted Closing Prices")
 
     fig = go.Figure()
 
-    for col in data.columns:
+    price_cols = [col for col in data.columns if col != "^GSPC"]
+
+    for col in price_cols:
         fig.add_trace(
             go.Scatter(
                 x=data.index,
