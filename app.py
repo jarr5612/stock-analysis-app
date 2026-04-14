@@ -114,14 +114,14 @@ with tab1:
     fig_returns = go.Figure()
 
     for col in returns.columns:
-    fig_returns.add_trace(
-        go.Scatter(
-            x=returns.index,
-            y=returns[col],
-            mode="lines",
-            name=col
+        fig_returns.add_trace(
+            go.Scatter(
+                x=returns.index,
+                y=returns[col],
+                mode="lines",
+                name=col
+            )
         )
-    )
 
     fig_returns.update_layout(
         title="Daily Returns",
