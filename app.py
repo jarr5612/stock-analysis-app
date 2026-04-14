@@ -82,7 +82,7 @@ tab1, tab2, tab3, tab4 = st.tabs([
 
 with tab1:
   
-    ("### Adjusted Closing Prices")
+    st.write("### Adjusted Closing Prices")
 
     fig = go.Figure()
 
@@ -110,7 +110,32 @@ with tab1:
 
 
     st.write("### Daily Returns")
-    st.line_chart(returns)
+    
+    fig_returns = go.Figure()
+
+    for col in returns.columns:
+    fig_returns.add_trace(
+        go.Scatter(
+            x=returns.index,
+            y=returns[col],
+            mode="lines",
+            name=col
+        )
+    )
+
+    fig_returns.update_layout(
+        title="Daily Returns",
+        xaxis_title="Date",
+        yaxis_title="Daily Return",
+        template="plotly_white"
+    )
+
+    fig_returns.update_xaxes(
+        tickformat="%b %Y",
+        dtick="M3"
+    )
+
+    st.plotly_chart(fig_returns, use_container_width=True)
 
     stats = pd.DataFrame({
         "Annual Return": returns.mean() * 252,
@@ -132,7 +157,33 @@ with tab1:
     for col in returns.columns:
         wealth_df[col] = (1 + returns[col]).cumprod() * 10000
 
-    st.line_chart(wealth_df)
+    
+    fig_growth = go.Figure()
+
+    for col in wealth_df.columns:
+        fig_growth.add_trace(
+            go.Scatter(
+                x=wealth_df.index,
+                y=wealth_df[col],
+                mode="lines",
+                name=col
+            )
+        )
+
+    fig_growth.update_layout(
+        title="Growth of $10,000 Investment",
+        xaxis_title="Date",
+        yaxis_title="Portfolio Value ($)",
+        template="plotly_white"
+    )
+
+    fig_growth.update_xaxes(
+        tickformat="%b %Y",
+        dtick="M3"
+    )
+
+    st.plotly_chart(fig_growth, use_container_width=True)
+
 
     st.caption("Fun fact: If you had invested $10,000 in the S&P 500 in 1970, you'd have over $1.5 million today. If you had invested it in Blockbuster stock, you'd have nothing. Diversify.")
 
@@ -141,7 +192,32 @@ with tab2:
 
     window = st.selectbox("Select rolling window (days)", [30, 60, 90], index=1)
     rolling_vol = returns.rolling(window).std() * np.sqrt(252)
-    st.line_chart(rolling_vol)
+    
+    fig_vol = go.Figure()
+
+    for col in rolling_vol.columns:
+        fig_vol.add_trace(
+            go.Scatter(
+                x=rolling_vol.index,
+                y=rolling_vol[col],
+                mode="lines",
+                name=col
+            )
+        )
+
+    fig_vol.update_layout(
+        title=f"{window}-Day Rolling Volatility",
+        xaxis_title="Date",
+        yaxis_title="Volatility",
+        template="plotly_white"
+    )
+
+    fig_vol.update_xaxes(
+        tickformat="%b %Y",
+        dtick="M3"
+    )
+
+    st.plotly_chart(fig_vol, use_container_width=True)
 
     st.write("### Distribution Analysis")
 
@@ -211,6 +287,17 @@ with tab3:
     if stock_a != stock_b:
         rolling_corr = returns[stock_a].rolling(corr_window).corr(returns[stock_b])
         rolling_corr_fig = px.line(rolling_corr, title=f"{corr_window}-Day Rolling Correlation: {stock_a} vs {stock_b}", labels={"value": "Correlation", "index": "Date"})
+
+        rolling_corr_fig.update_xaxes(
+            tickformat="%b %Y",
+            dtick="M3"
+        )
+
+        rolling_corr_fig.update_layout(
+            xaxis_title="Date",
+            yaxis_title="Correlation"
+        )
+
         st.plotly_chart(rolling_corr_fig, use_container_width=True)
 
     st.write("### Two-Asset Portfolio Explorer")
