@@ -81,9 +81,30 @@ tab1, tab2, tab3, tab4 = st.tabs([
 ])
 
 with tab1:
-    st.write("### Price Data")
-    normalized = data.div(data.iloc[0]) * 100
-    st.line_chart(normalized)
+    st.write("### Adjusted Closing Prices")
+
+    fig = go.Figure()
+
+    for col in data.columns:
+        fig.add_trace(
+            go.Scatter(
+                x=data.index,
+                y=data[col],
+                mode="lines",
+                name=col
+            )
+        )
+
+    fig.update_layout(
+        title="Adjusted Closing Prices Over Time",
+        xaxis_title="Date",
+        yaxis_title="Price (USD)",
+        template="plotly_white",
+        height=500
+    )
+
+    st.plotly_chart(fig, use_container_width=True)
+
 
     st.write("### Daily Returns")
     st.line_chart(returns)
